@@ -85,7 +85,4 @@ object task_collections {
     Set.from(dealerOne).diff( Set.from(dealerTwo)).toIterable
   }
 
-  def main(args: Array[String]): Unit = {
-    println(numbersToNumericString("aa1asd10aa"))
-  }
 }
