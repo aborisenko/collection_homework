@@ -1,5 +1,8 @@
 package collections
 
+import scala.annotation.tailrec
+import scala.util.matching.Regex
+
 object task_collections {
 
   def isASCIIString(str: String): Boolean = str.matches("[A-Za-z]+")
@@ -15,9 +18,10 @@ object task_collections {
    * HINT: Тут удобно использовать collect и zipWithIndex
    *
    * **/
-  def capitalizeIgnoringASCII(text: List[String]): List[String] = {
-    List.empty
-  }
+
+  //Честно говоря пытался понять как сделать проще через collect и zipWithIndex и не понял
+  def capitalizeIgnoringASCII(text: List[String]): List[String] = text.head :: text.tail.map(str => if(isASCIIString(str)) str.toUpperCase else str.toLowerCase)
+
 
   /**
    *
@@ -29,7 +33,29 @@ object task_collections {
    * HINT: Для всех возможных комбинаций чисел стоит использовать Map
    * **/
   def numbersToNumericString(text: String): String = {
-    ""
+    val digits: Map[Int, String] = Map(
+      0 -> "zero",
+      1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five", 6 -> "six", 7 -> "seven", 8 -> "eight", 9 -> "nine",
+      10 -> "ten")
+
+    def convert(ch: String): String = digits(ch.toInt)
+
+    @tailrec
+    def start(str:String, res: String): String = {
+      val i = str.indexWhere(_.isDigit)
+
+      if(i < 0)
+        res ++ str
+      else {
+        val j = str.indexWhere(!_.isDigit, i) match {
+          case -1 => str.size
+          case n if n>0 => n
+        }
+        start(str.substring(j), res ++ str.substring(0, i) ++ convert(str.substring(i, j)))
+      }
+    }
+
+    start(text, "")
   }
 
   /**
@@ -47,7 +73,7 @@ object task_collections {
    * Реализуйте метод который примет две коллекции (два источника) и вернёт объединенный список уникальный значений
    **/
   def intersectionAuto(dealerOne: Iterable[Auto], dealerTwo: Iterable[Auto]): Iterable[Auto] = {
-    Iterable.empty
+    Set.from(dealerOne).union( Set.from(dealerTwo)).toIterable
   }
 
   /**
@@ -56,6 +82,10 @@ object task_collections {
    * и вернёт уникальный список машин обслуживающихся в первом дилерском центре и не обслуживающимся во втором
    **/
   def filterAllLeftDealerAutoWithoutRight(dealerOne: Iterable[Auto], dealerTwo: Iterable[Auto]): Iterable[Auto] = {
-    Iterable.empty
+    Set.from(dealerOne).diff( Set.from(dealerTwo)).toIterable
+  }
+
+  def main(args: Array[String]): Unit = {
+    println(numbersToNumericString("aa1asd10aa"))
   }
 }
