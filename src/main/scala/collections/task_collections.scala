@@ -46,7 +46,7 @@ object task_collections {
     val digits: Map[Int, String] = Map(
       "0" -> "zero",
       "1" -> "one", "2" -> "two", "3" -> "three", "4" -> "four", "5" -> "five", "6" -> "six", "7" -> "seven", "8" -> "eight", "9" -> "nine",
-      10 -> "ten")
+      "10" -> "ten")
 
     def convert(str: String): String =
       digits.getOrElse(str, str)
