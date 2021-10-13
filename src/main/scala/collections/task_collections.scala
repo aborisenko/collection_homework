@@ -19,8 +19,11 @@ object task_collections {
    *
    * **/
 
-  //Честно говоря пытался понять как сделать проще через collect и zipWithIndex и не понял
-  def capitalizeIgnoringASCII(text: List[String]): List[String] = text.head :: text.tail.map(str => if(isASCIIString(str)) str.toUpperCase else str.toLowerCase)
+  def capitalizeIgnoringASCII(text: List[String]): List[String] = text.zipWithIndex.collect{
+    case (str, 0) => str
+    case (str, index) if isASCIIString(str) => str.toUpperCase
+    case (str, index) if !isASCIIString(str) => str.toLowerCase
+  }
 
 
   /**
@@ -32,30 +35,23 @@ object task_collections {
    *
    * HINT: Для всех возможных комбинаций чисел стоит использовать Map
    * **/
+
+  /** Немного не понял задание, гарантируется что числа всегда отделены пробелами с обоих сторон? изначально хотел Regex-ом
+   так разделить на цифры/нецифры, но у меня не получилось, почему-то в результате получался Array без разделителя
+   [\d+], т.е. "asd10asd1asd" -> ["asd","","asd","","asd"].
+
+   Но в общем да, если гарантируются пробелы - то решение довольно простое и короткое*/
+
   def numbersToNumericString(text: String): String = {
     val digits: Map[Int, String] = Map(
-      0 -> "zero",
-      1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five", 6 -> "six", 7 -> "seven", 8 -> "eight", 9 -> "nine",
-      10 -> "ten")
+      "0" -> "zero",
+      "1" -> "one", "2" -> "two", "3" -> "three", "4" -> "four", "5" -> "five", "6" -> "six", "7" -> "seven", "8" -> "eight", "9" -> "nine",
+      "10" -> "ten")
 
-    def convert(ch: String): String = digits(ch.toInt)
+    def convert(str: String): String =
+      digits.getOrElse(str, str)
 
-    @tailrec
-    def start(str:String, res: String): String = {
-      val i = str.indexWhere(_.isDigit)
-
-      if(i < 0)
-        res ++ str
-      else {
-        val j = str.indexWhere(!_.isDigit, i) match {
-          case -1 => str.size
-          case n if n>0 => n
-        }
-        start(str.substring(j), res ++ str.substring(0, i) ++ convert(str.substring(i, j)))
-      }
-    }
-
-    start(text, "")
+    text.split(" ").map(convert).mkString(" ")
   }
 
   /**
